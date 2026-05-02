@@ -23,7 +23,6 @@
       },
       "package": "com.rukshandesilva.fairshare",
       "newArchEnabled": false,
-      "usesCleartextTraffic": true,
       "permissions": []
     },
     "plugins": [
@@ -33,6 +32,14 @@
         "expo-image-picker",
         {
           "photosPermission": "FairShare needs access to your photos to attach receipts."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
         }
       ]
     ],
