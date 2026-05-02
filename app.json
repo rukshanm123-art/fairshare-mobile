@@ -21,7 +21,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0D0D0D"
       },
-      "package": "com.rukshandesilva.fairshare"
+      "package": "com.rukshandesilva.fairshare",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -31,10 +34,19 @@
         {
           "photosPermission": "FairShare needs access to your photos to attach receipts."
         }
-      ]
+      ],
+      "react-native-svg"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c7622471-a933-43cf-8c4b-42b7d70a3a05"
+      }
     }
   }
 }
