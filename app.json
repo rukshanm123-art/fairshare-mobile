@@ -22,9 +22,8 @@
         "backgroundColor": "#0D0D0D"
       },
       "package": "com.rukshandesilva.fairshare",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "newArchEnabled": false,
+      "permissions": []
     },
     "plugins": [
       "expo-router",
