@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Tabs, router } from 'expo-router'
-import { View, Text } from 'react-native'
+import { View, Text, Platform } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useAuthStore } from '@/lib/stores/authStore'
 
@@ -15,6 +16,9 @@ function TabIcon({ name, focused, label }: { name: keyof typeof Ionicons.glyphMa
 
 export default function AppLayout() {
   const { user } = useAuthStore()
+  const insets = useSafeAreaInsets()
+  // Reserve space for the home indicator on iPhone; minimum 8px on Android
+  const tabBarHeight = 60 + (Platform.OS === 'ios' ? insets.bottom : 8)
 
   useEffect(() => {
     if (!user) router.replace('/(auth)/login')
@@ -29,8 +33,8 @@ export default function AppLayout() {
           backgroundColor: '#111111',
           borderTopColor: '#262626',
           borderTopWidth: 1,
-          height: 72,
-          paddingBottom: 0,
+          height: tabBarHeight,
+          paddingBottom: Platform.OS === 'ios' ? insets.bottom : 8,
         },
       }}
     >
@@ -42,6 +46,8 @@ export default function AppLayout() {
         name="groups"
         options={{ tabBarIcon: ({ focused }) => <TabIcon name="people" focused={focused} label="Groups" /> }}
       />
+      {/* Hide group detail from tab bar — navigated to via router.push */}
+      <Tabs.Screen name="groups/[id]" options={{ href: null }} />
       <Tabs.Screen
         name="settle"
         options={{ tabBarIcon: ({ focused }) => <TabIcon name="swap-horizontal" focused={focused} label="Settle" /> }}

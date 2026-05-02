@@ -61,6 +61,8 @@ export const settlementsApi = {
     api.get<import('./types').SettlementSuggestion[]>('/settlements', {
       params: { groupId, mode: 'optimal' },
     }),
+  create: (data: { fromUserId: string; toUserId: string; amount: number; groupId: string }) =>
+    api.post<import('./types').Settlement>('/settlements', data),
   settle: (id: string) => api.post(`/settlements/${id}/settle`),
   history: () => api.get<import('./types').Settlement[]>('/settlements/history'),
 }

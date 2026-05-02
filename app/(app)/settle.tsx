@@ -43,9 +43,15 @@ export default function Settle() {
           onPress: async () => {
             setSettling(key)
             try {
-              // The API uses the settlement record id — we create a settlement first then mark it
-              // For suggestions without an id, use the settle endpoint with composed params
-              await settlementsApi.suggestions() // refresh
+              // Create the settlement record, then mark it as paid
+              const { data: record } = await settlementsApi.create({
+                fromUserId: suggestion.from.id,
+                toUserId: suggestion.to.id,
+                amount: suggestion.amount,
+                groupId: suggestion.groupId,
+              })
+              await settlementsApi.settle(record.id)
+              // Remove settled item from local state immediately
               setSuggestions((prev) => prev.filter((_, i) => i !== index))
             } catch {
               Alert.alert('Error', 'Could not record payment')

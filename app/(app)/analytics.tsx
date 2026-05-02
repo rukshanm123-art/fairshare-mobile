@@ -100,7 +100,7 @@ export default function Analytics() {
 
           {/* Category breakdown */}
           {categories.length > 0 && (
-            <Card className="mb-5">
+            <Card className="mb-5 p-5">
               <Text className="text-white font-semibold text-sm mb-4">By Category</Text>
               {categories.map((cat) => {
                 const pct = totalSpend > 0 ? (Number(cat.total) / totalSpend) * 100 : 0

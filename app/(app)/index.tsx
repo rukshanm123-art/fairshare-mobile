@@ -116,31 +116,32 @@ export default function Dashboard() {
         </View>
       </View>
 
-      {/* Recent expenses */}
-      {recentExpenses.length > 0 && (
-        <View className="px-5">
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-white font-semibold text-base">Recent Expenses</Text>
-            <TouchableOpacity onPress={() => router.push('/groups')}>
-              <Text className="text-brand text-sm">See all →</Text>
-            </TouchableOpacity>
-          </View>
-          {expLoading
-            ? [1, 2, 3].map((i) => (
-                <View key={i} className="h-20 bg-bg-card rounded-2xl mb-3 animate-pulse" />
-              ))
-            : recentExpenses.map((exp) => (
-                <ExpenseCard key={exp.id} expense={exp} currentUserId={user?.id} />
-              ))}
+      {/* Recent expenses — skeleton while loading, list when loaded */}
+      <View className="px-5">
+        <View className="flex-row items-center justify-between mb-3">
+          <Text className="text-white font-semibold text-base">Recent Expenses</Text>
+          <TouchableOpacity onPress={() => router.push('/groups')}>
+            <Text className="text-brand text-sm">See all →</Text>
+          </TouchableOpacity>
         </View>
-      )}
 
-      {expenses.length === 0 && !expLoading && (
-        <View className="px-5 items-center py-8">
-          <Text className="text-4xl mb-3">🧾</Text>
-          <Text className="text-muted text-sm text-center">No expenses yet. Add a group and start splitting!</Text>
-        </View>
-      )}
+        {expLoading && expenses.length === 0 && (
+          [1, 2, 3].map((i) => (
+            <View key={i} className="h-20 bg-bg-card rounded-2xl mb-3 opacity-40" />
+          ))
+        )}
+
+        {!expLoading && recentExpenses.length === 0 && (
+          <View className="items-center py-8">
+            <Text className="text-4xl mb-3">🧾</Text>
+            <Text className="text-muted text-sm text-center">No expenses yet. Add a group and start splitting!</Text>
+          </View>
+        )}
+
+        {recentExpenses.map((exp) => (
+          <ExpenseCard key={exp.id} expense={exp} currentUserId={user?.id} />
+        ))}
+      </View>
     </ScrollView>
   )
 }

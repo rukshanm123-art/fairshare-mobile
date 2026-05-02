@@ -35,9 +35,11 @@ export function ExpenseCard({ expense, currentUserId, onDelete }: Props) {
             </Text>
             {expense.group && ` · ${expense.group.name}`}
           </Text>
-          <Text className="text-muted text-xs mt-0.5">
-            {format(new Date(expense.date), 'MMM d, yyyy')}
-          </Text>
+          {expense.date ? (
+            <Text className="text-muted text-xs mt-0.5">
+              {format(new Date(expense.date), 'MMM d, yyyy')}
+            </Text>
+          ) : null}
         </View>
 
         <View className="items-end gap-1">
