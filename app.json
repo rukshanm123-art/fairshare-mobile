@@ -34,8 +34,7 @@
         {
           "photosPermission": "FairShare needs access to your photos to attach receipts."
         }
-      ],
-      "react-native-svg"
+      ]
     ],
     "experiments": {
       "typedRoutes": true
