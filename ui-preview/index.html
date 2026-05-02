@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FairShare Mobile – UI Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #111; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; color: #fff; padding: 24px 16px 60px; }
+
+  h1 { text-align: center; font-size: 22px; font-weight: 700; color: #4ADE80; margin-bottom: 6px; }
+  .subtitle { text-align: center; font-size: 13px; color: #737373; margin-bottom: 32px; }
+
+  .screens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .screen-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .screen-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #525252;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: 300px;
+    height: 640px;
+    background: #0D0D0D;
+    border-radius: 40px;
+    border: 2px solid #333;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  }
+  /* Status bar */
+  .status-bar {
+    height: 36px;
+    background: #0D0D0D;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 11px;
+    color: #888;
+    flex-shrink: 0;
+  }
+  .status-bar .time { font-weight: 600; color: #fff; font-size: 12px; }
+  .status-icons { display: flex; gap: 5px; align-items: center; }
+
+  /* Scrollable content area */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    padding-bottom: 72px;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* Tab bar */
+  .tab-bar {
+    height: 72px;
+    background: #111111;
+    border-top: 1px solid #262626;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 6px;
+    flex-shrink: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+  .tab-icon { font-size: 20px; line-height: 1; }
+  .tab-label { font-size: 9px; font-weight: 400; color: #525252; }
+  .tab.active .tab-label { color: #4ADE80; font-weight: 600; }
+  .tab.active .tab-icon-svg { color: #4ADE80; }
+
+  /* ──────────── REUSABLE COMPONENTS ──────────── */
+  .screen-title {
+    font-size: 22px; font-weight: 700; color: #fff;
+  }
+  .screen-sub {
+    font-size: 12px; color: #737373; margin-top: 2px;
+  }
+  .px { padding: 0 18px; }
+  .pt-header { padding-top: 18px; }
+
+  .card {
+    background: #161616;
+    border: 1px solid #262626;
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .label-xs {
+    font-size: 10px;
+    font-weight: 600;
+    color: #737373;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  /* ──────────── SCREEN: LOGIN ──────────── */
+  .login-logo-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 40px; margin-bottom: 36px;
+  }
+  .login-logo {
+    width: 60px; height: 60px; background: #4ADE80;
+    border-radius: 16px; font-size: 28px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .login-app-name { font-size: 26px; font-weight: 700; }
+  .login-tagline { font-size: 12px; color: #737373; margin-top: 3px; }
+
+  .input-group { margin-bottom: 14px; padding: 0 18px; }
+  .input-label { font-size: 10px; font-weight: 600; color: #737373; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+  .input-field {
+    background: #1C1C1C; border: 1px solid #262626; border-radius: 12px;
+    padding: 11px 14px; color: #fff; font-size: 14px; width: 100%;
+  }
+  .input-placeholder { color: #525252; }
+
+  .btn-primary {
+    background: #4ADE80; border-radius: 12px;
+    padding: 13px; text-align: center;
+    font-size: 15px; font-weight: 600; color: #000;
+    margin: 6px 18px 0;
+  }
+
+  .link-row { text-align: center; margin-top: 18px; font-size: 12px; color: #737373; }
+  .link-brand { color: #4ADE80; font-weight: 600; }
+
+  /* ──────────── SCREEN: DASHBOARD ──────────── */
+  .greeting { font-size: 13px; color: #737373; }
+  .user-name { font-size: 22px; font-weight: 700; margin-top: 2px; }
+  .balance-card { margin: 14px 18px; }
+  .balance-label { font-size: 10px; font-weight: 600; color: #737373; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+  .balance-amount { font-size: 36px; font-weight: 700; color: #4ADE80; line-height: 1; }
+  .balance-sub { font-size: 11px; color: #737373; margin-top: 5px; }
+
+  .stats-row { display: flex; gap: 10px; margin: 0 18px 14px; }
+  .stat-card { flex: 1; }
+  .stat-label { font-size: 10px; color: #737373; margin-bottom: 4px; }
+  .stat-value { font-size: 22px; font-weight: 700; }
+  .stat-value.brand { color: #4ADE80; }
+
+  .section-title { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .quick-actions { display: flex; gap: 10px; margin: 0 18px 14px; }
+  .quick-btn {
+    flex: 1; border-radius: 16px; padding: 14px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+  }
+  .quick-btn.primary { background: #4ADE80; }
+  .quick-btn.secondary { background: #161616; border: 1px solid #262626; }
+  .quick-btn-emoji { font-size: 22px; line-height: 1; }
+  .quick-btn-text { font-size: 11px; font-weight: 600; }
+  .quick-btn.primary .quick-btn-text { color: #000; }
+  .quick-btn.secondary .quick-btn-text { color: #fff; }
+
+  .expense-card {
+    background: #161616; border: 1px solid #262626;
+    border-radius: 16px; padding: 14px; margin-bottom: 10px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .expense-icon {
+    width: 38px; height: 38px; background: #1C1C1C;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .expense-desc { font-size: 13px; font-weight: 600; color: #fff; }
+  .expense-meta { font-size: 11px; color: #737373; margin-top: 2px; }
+  .expense-you { color: #4ADE80; }
+  .expense-right { margin-left: auto; text-align: right; }
+  .expense-amount { font-size: 14px; font-weight: 700; }
+  .expense-date { font-size: 10px; color: #737373; margin-top: 2px; }
+
+  /* ──────────── SCREEN: GROUPS ──────────── */
+  .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px 14px;
+  }
+  .add-btn {
+    width: 36px; height: 36px; background: #4ADE80;
+    border-radius: 18px; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 300; color: #000; line-height: 1;
+  }
+  .group-card {
+    background: #161616; border: 1px solid #262626;
+    border-radius: 16px; padding: 14px; margin-bottom: 10px;
+    display: flex; gap: 12px; align-items: center;
+  }
+  .group-emoji-box {
+    width: 46px; height: 46px; background: #1C1C1C;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .group-name { font-size: 15px; font-weight: 600; }
+  .group-meta { font-size: 12px; color: #737373; margin-top: 2px; }
+  .group-arrow { margin-left: auto; font-size: 20px; color: #525252; }
+
+  /* ──────────── SCREEN: GROUP DETAIL ──────────── */
+  .detail-header {
+    display: flex; gap: 10px; align-items: center;
+    padding: 14px 18px; border-bottom: 1px solid #262626;
+  }
+  .back-btn { font-size: 20px; color: #fff; flex-shrink: 0; }
+  .detail-name { font-size: 17px; font-weight: 700; }
+  .detail-sub { font-size: 11px; color: #737373; }
+  .add-circle {
+    margin-left: auto; width: 34px; height: 34px; background: #4ADE80;
+    border-radius: 17px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: #000;
+  }
+
+  .members-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .member-chip {
+    display: flex; align-items: center; gap: 7px;
+    background: #161616; border: 1px solid #262626;
+    border-radius: 10px; padding: 6px 10px;
+  }
+  .avatar {
+    width: 24px; height: 24px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .avatar.sm { width: 24px; height: 24px; font-size: 11px; }
+  .avatar.md { width: 34px; height: 34px; font-size: 14px; }
+  .avatar.lg { width: 52px; height: 52px; font-size: 20px; }
+  .av-violet { background: #7c3aed; }
+  .av-blue { background: #2563eb; }
+  .av-emerald { background: #059669; }
+  .av-amber { background: #d97706; }
+  .av-rose { background: #e11d48; }
+  .member-name { font-size: 12px; color: #fff; }
+
+  /* ──────────── SCREEN: SETTLE ──────────── */
+  .settle-section-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .07em; margin-bottom: 10px;
+  }
+  .settle-red { color: #f87171; }
+  .settle-green { color: #4ADE80; }
+  .settle-card {
+    background: #161616; border: 1px solid #262626;
+    border-radius: 16px; padding: 14px; margin-bottom: 10px;
+  }
+  .settle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .settle-info { flex: 1; }
+  .settle-who { font-size: 13px; font-weight: 500; color: #fff; }
+  .settle-who .muted { color: #737373; }
+  .settle-group { font-size: 11px; color: #737373; margin-top: 2px; }
+  .settle-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .settle-amount-red { font-size: 20px; font-weight: 700; color: #f87171; }
+  .settle-amount-green { font-size: 20px; font-weight: 700; color: #4ADE80; }
+  .pay-btn {
+    background: #4ADE80; border-radius: 10px;
+    padding: 7px 16px; font-size: 13px; font-weight: 600; color: #000;
+  }
+  .confirm-btn {
+    background: #1C1C1C; border: 1px solid #262626;
+    border-radius: 10px; padding: 7px 16px;
+    font-size: 13px; font-weight: 600; color: #fff;
+  }
+
+  /* ──────────── SCREEN: ANALYTICS ──────────── */
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-bottom: 20px; }
+  .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+  .bar { width: 100%; background: #4ADE80; border-radius: 4px 4px 0 0; min-height: 4px; }
+  .bar-label { font-size: 9px; color: #737373; }
+  .bar-value { font-size: 9px; color: #737373; }
+
+  .cat-row { margin-bottom: 14px; }
+  .cat-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .cat-name { font-size: 13px; color: #fff; text-transform: capitalize; }
+  .cat-right { display: flex; gap: 8px; }
+  .cat-pct { font-size: 12px; color: #737373; }
+  .cat-amount { font-size: 12px; font-weight: 600; }
+  .bar-track { height: 6px; background: #1C1C1C; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+
+  /* ──────────── SCREEN: PROFILE ──────────── */
+  .profile-top { display: flex; flex-direction: column; align-items: center; padding: 24px 0 20px; }
+  .profile-name { font-size: 19px; font-weight: 700; margin-top: 10px; }
+  .profile-email { font-size: 13px; color: #737373; margin-top: 3px; }
+  .info-card-row {
+    display: flex; gap: 10px; align-items: center; padding: 8px 0;
+  }
+  .info-icon { font-size: 16px; color: #737373; }
+  .info-label { font-size: 10px; color: #737373; }
+  .info-value { font-size: 13px; font-weight: 500; color: #fff; margin-top: 1px; }
+  .signout-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(220,38,38,.15); border: 1px solid rgba(220,38,38,.3);
+    border-radius: 16px; padding: 14px; margin: 20px 18px 0;
+    font-size: 14px; font-weight: 600; color: #f87171;
+  }
+
+  /* ──────────── SCREEN: ADD EXPENSE MODAL ──────────── */
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 18px 14px; border-bottom: 1px solid #262626;
+  }
+  .modal-title { font-size: 17px; font-weight: 700; }
+  .close-btn { font-size: 22px; color: #737373; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 18px 14px; }
+  .tag {
+    padding: 5px 12px; border-radius: 8px; border: 1px solid #262626;
+    font-size: 12px; font-weight: 500; color: #737373;
+  }
+  .tag.active { background: #4ADE80; border-color: #4ADE80; color: #000; }
+
+  .split-hint { font-size: 11px; color: #737373; margin: 0 18px 14px; }
+</style>
+</head>
+<body>
+
+<h1>💸 FairShare Mobile</h1>
+<p class="subtitle">UI Preview — All 9 screens</p>
+
+<div class="screens-grid">
+
+  <!-- ═══════════════ LOGIN ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Login</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content">
+        <div class="login-logo-wrap">
+          <div class="login-logo">💸</div>
+          <div class="login-app-name">FairShare</div>
+          <div class="login-tagline">Split expenses, stay friends</div>
+        </div>
+        <div style="padding: 0 18px; margin-bottom: 6px;">
+          <div style="font-size:20px;font-weight:700;margin-bottom:4px;">Welcome back</div>
+          <div style="font-size:12px;color:#737373;margin-bottom:20px;">Sign in to your account</div>
+        </div>
+        <div class="input-group">
+          <div class="input-label">Email</div>
+          <div class="input-field"><span class="input-placeholder">you@example.com</span></div>
+        </div>
+        <div class="input-group">
+          <div class="input-label">Password</div>
+          <div class="input-field"><span class="input-placeholder">••••••••</span></div>
+        </div>
+        <div class="btn-primary">Sign in</div>
+        <div class="link-row">No account? <span class="link-brand">Create one</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ REGISTER ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Register</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content">
+        <div class="login-logo-wrap" style="margin-bottom:20px;padding-top:28px;">
+          <div class="login-logo">💸</div>
+          <div class="login-app-name">FairShare</div>
+          <div class="login-tagline">Split expenses, stay friends</div>
+        </div>
+        <div style="padding: 0 18px; margin-bottom: 6px;">
+          <div style="font-size:20px;font-weight:700;margin-bottom:4px;">Create account</div>
+          <div style="font-size:12px;color:#737373;margin-bottom:16px;">Start splitting expenses fairly</div>
+        </div>
+        <div class="input-group" style="margin-bottom:10px;">
+          <div class="input-label">Full name</div>
+          <div class="input-field"><span class="input-placeholder">Rukshan De Silva</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:10px;">
+          <div class="input-label">Email</div>
+          <div class="input-field"><span class="input-placeholder">you@example.com</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:10px;">
+          <div class="input-label">Password</div>
+          <div class="input-field"><span class="input-placeholder">Min 6 characters</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:10px;">
+          <div class="input-label">Confirm password</div>
+          <div class="input-field"><span class="input-placeholder">Repeat password</span></div>
+        </div>
+        <div class="btn-primary">Create account</div>
+        <div class="link-row">Already have an account? <span class="link-brand">Sign in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ DASHBOARD ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Dashboard (Home)</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content">
+        <div style="padding: 18px 18px 14px;">
+          <div class="greeting">Good morning 👋</div>
+          <div class="user-name">Rukshan</div>
+        </div>
+        <!-- Net balance card -->
+        <div class="balance-card card">
+          <div class="balance-label">Your Net Balance</div>
+          <div class="balance-amount">+$124.50</div>
+          <div class="balance-sub">You're owed money</div>
+        </div>
+        <!-- Stats -->
+        <div class="stats-row" style="margin-top:14px;">
+          <div class="stat-card card">
+            <div class="stat-label">Groups</div>
+            <div class="stat-value">3</div>
+          </div>
+          <div class="stat-card card">
+            <div class="stat-label">Expenses</div>
+            <div class="stat-value">18</div>
+          </div>
+          <div class="stat-card card">
+            <div class="stat-label">Settled</div>
+            <div class="stat-value brand">5</div>
+          </div>
+        </div>
+        <!-- Quick actions -->
+        <div style="padding: 14px 18px 10px;">
+          <div class="section-title">Quick Actions</div>
+        </div>
+        <div class="quick-actions">
+          <div class="quick-btn primary">
+            <div class="quick-btn-emoji">👥</div>
+            <div class="quick-btn-text">Groups</div>
+          </div>
+          <div class="quick-btn secondary">
+            <div class="quick-btn-emoji">💳</div>
+            <div class="quick-btn-text">Settle Up</div>
+          </div>
+          <div class="quick-btn secondary">
+            <div class="quick-btn-emoji">📊</div>
+            <div class="quick-btn-text">Analytics</div>
+          </div>
+        </div>
+        <!-- Recent expenses -->
+        <div style="padding: 10px 18px 6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="section-title">Recent Expenses</div>
+            <div style="font-size:12px;color:#4ADE80;">See all →</div>
+          </div>
+        </div>
+        <div style="padding:0 18px;">
+          <div class="expense-card">
+            <div class="expense-icon">🍔</div>
+            <div class="flex-1" style="flex:1">
+              <div class="expense-desc">Dinner at Sushi Place</div>
+              <div class="expense-meta">Paid by <span class="expense-you">you</span> · Bali Trip</div>
+              <div class="expense-meta">Apr 28, 2025</div>
+            </div>
+            <div class="expense-right">
+              <div class="expense-amount">USD 80.00</div>
+            </div>
+          </div>
+          <div class="expense-card">
+            <div class="expense-icon">🚗</div>
+            <div style="flex:1">
+              <div class="expense-desc">Taxi to airport</div>
+              <div class="expense-meta">Paid by <span style="color:#fff;">James</span> · Bali Trip</div>
+              <div class="expense-meta">Apr 25, 2025</div>
+            </div>
+            <div class="expense-right">
+              <div class="expense-amount">USD 35.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <div class="tab active">
+          <div style="font-size:19px;">🏠</div>
+          <div class="tab-label" style="color:#4ADE80;font-weight:600;">Home</div>
+        </div>
+        <div class="tab">
+          <div style="font-size:19px;">👥</div>
+          <div class="tab-label">Groups</div>
+        </div>
+        <div class="tab">
+          <div style="font-size:19px;">⇄</div>
+          <div class="tab-label">Settle</div>
+        </div>
+        <div class="tab">
+          <div style="font-size:19px;">📊</div>
+          <div class="tab-label">Analytics</div>
+        </div>
+        <div class="tab">
+          <div style="font-size:19px;">👤</div>
+          <div class="tab-label">Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ GROUPS ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Groups</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content">
+        <div class="header-row">
+          <div>
+            <div class="screen-title">Groups</div>
+            <div class="screen-sub">3 groups</div>
+          </div>
+          <div class="add-btn">+</div>
+        </div>
+        <div style="padding:0 18px;">
+          <div class="group-card">
+            <div class="group-emoji-box">✈️</div>
+            <div>
+              <div class="group-name">Bali Trip</div>
+              <div class="group-meta">4 members · 12 expenses</div>
+            </div>
+            <div class="group-arrow">›</div>
+          </div>
+          <div class="group-card">
+            <div class="group-emoji-box">🏠</div>
+            <div>
+              <div class="group-name">Flat Bills</div>
+              <div class="group-meta">3 members · 5 expenses</div>
+            </div>
+            <div class="group-arrow">›</div>
+          </div>
+          <div class="group-card">
+            <div class="group-emoji-box">🍕</div>
+            <div>
+              <div class="group-name">Friday Dinners</div>
+              <div class="group-meta">6 members · 1 expense</div>
+            </div>
+            <div class="group-arrow">›</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab"><div style="font-size:19px;">🏠</div><div class="tab-label">Home</div></div>
+        <div class="tab active"><div style="font-size:19px;">👥</div><div class="tab-label" style="color:#4ADE80;font-weight:600;">Groups</div></div>
+        <div class="tab"><div style="font-size:19px;">⇄</div><div class="tab-label">Settle</div></div>
+        <div class="tab"><div style="font-size:19px;">📊</div><div class="tab-label">Analytics</div></div>
+        <div class="tab"><div style="font-size:19px;">👤</div><div class="tab-label">Profile</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ GROUP DETAIL ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Group Detail</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content">
+        <div class="detail-header">
+          <div class="back-btn">←</div>
+          <div style="font-size:22px;">✈️</div>
+          <div style="flex:1">
+            <div class="detail-name">Bali Trip</div>
+            <div class="detail-sub">4 members · 12 expenses</div>
+          </div>
+          <div class="add-circle">+</div>
+        </div>
+        <div style="padding:14px 18px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:14px;font-weight:600;">Members</div>
+            <div style="font-size:12px;color:#4ADE80;">＋ Add</div>
+          </div>
+          <div class="members-row">
+            <div class="member-chip">
+              <div class="avatar sm av-violet">R</div>
+              <span class="member-name">You</span>
+            </div>
+            <div class="member-chip">
+              <div class="avatar sm av-blue">J</div>
+              <span class="member-name">James</span>
+            </div>
+            <div class="member-chip">
+              <div class="avatar sm av-emerald">S</div>
+              <span class="member-name">Sara</span>
+            </div>
+            <div class="member-chip">
+              <div class="avatar sm av-amber">T</div>
+              <span class="member-name">Tom</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px 18px 0;">
+          <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Expenses</div>
+          <div class="expense-card">
+            <div class="expense-icon">🍔</div>
+            <div style="flex:1">
+              <div class="expense-desc">Dinner at Sushi Place</div>
+              <div class="expense-meta">Paid by <span class="expense-you">you</span></div>
+              <div class="expense-meta">Apr 28, 2025</div>
+            </div>
+            <div class="expense-right">
+              <div class="expense-amount">USD 80.00</div>
+              <div style="font-size:14px;color:#525252;margin-top:4px;text-align:right;">🗑</div>
+            </div>
+          </div>
+          <div class="expense-card">
+            <div class="expense-icon">🏠</div>
+            <div style="flex:1">
+              <div class="expense-desc">Hotel Booking</div>
+              <div class="expense-meta">Paid by <span style="color:#fff;">James</span></div>
+              <div class="expense-meta">Apr 22, 2025</div>
+            </div>
+            <div class="expense-right">
+              <div class="expense-amount">USD 320.00</div>
+            </div>
+          </div>
+          <div class="expense-card">
+            <div class="expense-icon">🚗</div>
+            <div style="flex:1">
+              <div class="expense-desc">Airport taxi</div>
+              <div class="expense-meta">Paid by <span style="color:#fff;">Sara</span></div>
+              <div class="expense-meta">Apr 20, 2025</div>
+            </div>
+            <div class="expense-right">
+              <div class="expense-amount">USD 35.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ADD EXPENSE MODAL ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Add Expense (Modal)</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content" style="background:#161616;">
+        <div class="modal-header">
+          <div class="modal-title">Add Expense</div>
+          <div class="close-btn">✕</div>
+        </div>
+        <div style="padding:16px 18px 0;">
+          <div class="label-xs" style="margin-bottom:6px;">What was it for?</div>
+          <div class="input-field" style="margin-bottom:14px;border-radius:12px;background:#1C1C1C;border:1px solid #262626;padding:11px 14px;color:#525252;">e.g. Dinner at Sushi Place</div>
+          <div class="label-xs" style="margin-bottom:6px;">Amount (USD)</div>
+          <div class="input-field" style="margin-bottom:14px;border-radius:12px;background:#1C1C1C;border:1px solid #262626;padding:11px 14px;color:#525252;">0.00</div>
+          <div class="label-xs" style="margin-bottom:8px;">Category</div>
+        </div>
+        <div class="tag-row">
+          <div class="tag active">Food</div>
+          <div class="tag">Transport</div>
+          <div class="tag">Entertainment</div>
+          <div class="tag">Accommodation</div>
+          <div class="tag">Utilities</div>
+          <div class="tag">Shopping</div>
+          <div class="tag">Health</div>
+          <div class="tag">Other</div>
+        </div>
+        <div class="split-hint">Split equally among 4 members</div>
+        <div style="padding:0 18px;">
+          <div class="btn-primary">Add Expense</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SETTLE UP ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Settle Up</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content">
+        <div style="padding:18px 18px 14px;">
+          <div class="screen-title">Settle Up</div>
+          <div class="screen-sub">Outstanding balances across all groups</div>
+        </div>
+        <div style="padding:0 18px;">
+          <div class="settle-section-label settle-red">You Owe</div>
+          <div class="settle-card">
+            <div class="settle-row">
+              <div class="avatar md av-violet">R</div>
+              <div class="settle-info">
+                <div class="settle-who">You <span class="muted">owes</span> James</div>
+                <div class="settle-group">Bali Trip</div>
+              </div>
+              <div class="avatar md av-blue">J</div>
+            </div>
+            <div class="settle-bottom">
+              <div class="settle-amount-red">$45.00</div>
+              <div class="pay-btn">Pay</div>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+          <div class="settle-section-label settle-green">Owed to You</div>
+          <div class="settle-card">
+            <div class="settle-row">
+              <div class="avatar md av-amber">T</div>
+              <div class="settle-info">
+                <div class="settle-who">Tom <span class="muted">owes</span> you</div>
+                <div class="settle-group">Flat Bills</div>
+              </div>
+              <div class="avatar md av-violet">R</div>
+            </div>
+            <div class="settle-bottom">
+              <div class="settle-amount-green">$80.00</div>
+              <div class="confirm-btn">Confirm</div>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+          <div class="settle-section-label" style="color:#525252;">Between Others</div>
+          <div class="settle-card">
+            <div class="settle-row">
+              <div class="avatar md av-blue">J</div>
+              <div class="settle-info">
+                <div class="settle-who">James <span class="muted">owes</span> Sara</div>
+                <div class="settle-group">Bali Trip</div>
+              </div>
+              <div class="avatar md av-emerald">S</div>
+            </div>
+            <div class="settle-bottom">
+              <div style="font-size:20px;font-weight:700;color:#fff;">$22.50</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab"><div style="font-size:19px;">🏠</div><div class="tab-label">Home</div></div>
+        <div class="tab"><div style="font-size:19px;">👥</div><div class="tab-label">Groups</div></div>
+        <div class="tab active"><div style="font-size:19px;">⇄</div><div class="tab-label" style="color:#4ADE80;font-weight:600;">Settle</div></div>
+        <div class="tab"><div style="font-size:19px;">📊</div><div class="tab-label">Analytics</div></div>
+        <div class="tab"><div style="font-size:19px;">👤</div><div class="tab-label">Profile</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ANALYTICS ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Analytics</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content">
+        <div style="padding:18px 18px 14px;">
+          <div class="screen-title">Analytics</div>
+          <div class="screen-sub">Spending insights across all groups</div>
+        </div>
+        <div style="padding:0 18px;">
+          <!-- Total -->
+          <div class="card" style="margin-bottom:12px;">
+            <div class="label-xs" style="margin-bottom:4px;">Total Tracked</div>
+            <div style="font-size:28px;font-weight:700;">$874.50</div>
+          </div>
+          <!-- Bar chart -->
+          <div class="card" style="margin-bottom:12px;">
+            <div style="font-size:13px;font-weight:600;margin-bottom:12px;">Monthly Spending (Last 6 months)</div>
+            <div class="bar-chart">
+              <div class="bar-wrap">
+                <div class="bar-value">$95</div>
+                <div class="bar" style="height:38%;"></div>
+                <div class="bar-label">Nov</div>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar-value">$210</div>
+                <div class="bar" style="height:70%;"></div>
+                <div class="bar-label">Dec</div>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar-value">$145</div>
+                <div class="bar" style="height:52%;"></div>
+                <div class="bar-label">Jan</div>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar-value">$88</div>
+                <div class="bar" style="height:33%;"></div>
+                <div class="bar-label">Feb</div>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar-value">$176</div>
+                <div class="bar" style="height:63%;"></div>
+                <div class="bar-label">Mar</div>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar-value">$259</div>
+                <div class="bar" style="height:100%;"></div>
+                <div class="bar-label">Apr</div>
+              </div>
+            </div>
+          </div>
+          <!-- Categories -->
+          <div class="card" style="margin-bottom:12px;">
+            <div style="font-size:13px;font-weight:600;margin-bottom:12px;">By Category</div>
+            <div class="cat-row">
+              <div class="cat-top">
+                <div class="cat-name">Food</div>
+                <div class="cat-right">
+                  <div class="cat-pct">38%</div>
+                  <div class="cat-amount" style="color:#4ADE80;">$332.31</div>
+                </div>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:38%;background:#4ADE80;"></div></div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-top">
+                <div class="cat-name">Accommodation</div>
+                <div class="cat-right">
+                  <div class="cat-pct">32%</div>
+                  <div class="cat-amount" style="color:#FB923C;">$279.84</div>
+                </div>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:32%;background:#FB923C;"></div></div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-top">
+                <div class="cat-name">Transport</div>
+                <div class="cat-right">
+                  <div class="cat-pct">18%</div>
+                  <div class="cat-amount" style="color:#60A5FA;">$157.41</div>
+                </div>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:18%;background:#60A5FA;"></div></div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-top">
+                <div class="cat-name">Entertainment</div>
+                <div class="cat-right">
+                  <div class="cat-pct">12%</div>
+                  <div class="cat-amount" style="color:#C084FC;">$104.94</div>
+                </div>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:12%;background:#C084FC;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab"><div style="font-size:19px;">🏠</div><div class="tab-label">Home</div></div>
+        <div class="tab"><div style="font-size:19px;">👥</div><div class="tab-label">Groups</div></div>
+        <div class="tab"><div style="font-size:19px;">⇄</div><div class="tab-label">Settle</div></div>
+        <div class="tab active"><div style="font-size:19px;">📊</div><div class="tab-label" style="color:#4ADE80;font-weight:600;">Analytics</div></div>
+        <div class="tab"><div style="font-size:19px;">👤</div><div class="tab-label">Profile</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PROFILE ═══════════════ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Profile</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+      <div class="content">
+        <div style="padding:18px 18px 10px;">
+          <div class="screen-title">Profile</div>
+        </div>
+        <div class="profile-top">
+          <div class="avatar lg av-violet">R</div>
+          <div class="profile-name">Rukshan De Silva</div>
+          <div class="profile-email">rukshan@example.com</div>
+        </div>
+        <div style="padding:0 18px;">
+          <div class="card" style="margin-bottom:10px;">
+            <div class="info-card-row">
+              <div class="info-icon">👤</div>
+              <div>
+                <div class="info-label">Full Name</div>
+                <div class="info-value">Rukshan De Silva</div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:10px;">
+            <div class="info-card-row">
+              <div class="info-icon">✉️</div>
+              <div>
+                <div class="info-label">Email</div>
+                <div class="info-value">rukshan@example.com</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="signout-btn">
+          <span>🚪</span> Sign Out
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab"><div style="font-size:19px;">🏠</div><div class="tab-label">Home</div></div>
+        <div class="tab"><div style="font-size:19px;">👥</div><div class="tab-label">Groups</div></div>
+        <div class="tab"><div style="font-size:19px;">⇄</div><div class="tab-label">Settle</div></div>
+        <div class="tab"><div style="font-size:19px;">📊</div><div class="tab-label">Analytics</div></div>
+        <div class="tab active"><div style="font-size:19px;">👤</div><div class="tab-label" style="color:#4ADE80;font-weight:600;">Profile</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end screens-grid -->
+</body>
+</html>

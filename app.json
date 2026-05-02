@@ -23,6 +23,7 @@
       },
       "package": "com.rukshandesilva.fairshare",
       "newArchEnabled": false,
+      "usesCleartextTraffic": true,
       "permissions": []
     },
     "plugins": [

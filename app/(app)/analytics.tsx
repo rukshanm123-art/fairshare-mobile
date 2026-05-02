@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Dimensions } from 'react-native'
-import { BarChart } from 'react-native-gifted-charts'
 import { analyticsApi } from '@/lib/api'
 import { Card } from '@/components/ui/Card'
 import type { MonthlyData, CategoryData } from '@/lib/types'
@@ -12,6 +11,40 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 const { width } = Dimensions.get('window')
+
+// Simple custom bar chart — no Reanimated, no external chart library
+function SimpleBarChart({ data }: { data: { label: string; value: number }[] }) {
+  const maxVal = Math.max(...data.map((d) => d.value), 1)
+  const chartHeight = 130
+  const barWidth = Math.floor((width - 100) / data.length) - 8
+
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: chartHeight + 28, gap: 4 }}>
+      {data.map((item, i) => {
+        const barH = Math.max((item.value / maxVal) * chartHeight, 4)
+        return (
+          <View key={i} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}>
+            {item.value > 0 && (
+              <Text style={{ fontSize: 8, color: '#737373', marginBottom: 2 }}>
+                ${item.value >= 1000 ? `${(item.value / 1000).toFixed(1)}k` : item.value.toFixed(0)}
+              </Text>
+            )}
+            <View
+              style={{
+                width: barWidth > 8 ? barWidth : 8,
+                height: barH,
+                backgroundColor: '#4ADE80',
+                borderRadius: 4,
+                marginBottom: 4,
+              }}
+            />
+            <Text style={{ fontSize: 9, color: '#737373' }}>{item.label}</Text>
+          </View>
+        )
+      })}
+    </View>
+  )
+}
 
 export default function Analytics() {
   const [monthly, setMonthly] = useState<MonthlyData[]>([])
@@ -41,16 +74,9 @@ export default function Analytics() {
   }
 
   const totalSpend = categories.reduce((a, c) => a + Number(c.total), 0)
-
   const barData = monthly.slice(-6).map((m) => ({
-    value: Number(m.total),
     label: m.month.slice(0, 3),
-    frontColor: '#4ADE80',
-    topLabelComponent: () => (
-      <Text style={{ color: '#737373', fontSize: 9, marginBottom: 2 }}>
-        {Number(m.total) > 0 ? `$${Number(m.total).toFixed(0)}` : ''}
-      </Text>
-    ),
+    value: Number(m.total),
   }))
 
   return (
@@ -79,22 +105,7 @@ export default function Analytics() {
           {barData.length > 0 && (
             <Card className="mb-5 p-5">
               <Text className="text-white font-semibold text-sm mb-4">Monthly Spending (Last 6 months)</Text>
-              <BarChart
-                data={barData}
-                barWidth={32}
-                spacing={12}
-                roundedTop
-                hideRules
-                xAxisThickness={0}
-                yAxisThickness={0}
-                yAxisTextStyle={{ color: '#525252', fontSize: 10 }}
-                xAxisLabelTextStyle={{ color: '#737373', fontSize: 10 }}
-                noOfSections={4}
-                maxValue={Math.max(...barData.map((d) => d.value), 10) * 1.2}
-                width={width - 100}
-                height={160}
-                barBorderRadius={4}
-              />
+              <SimpleBarChart data={barData} />
             </Card>
           )}
 
